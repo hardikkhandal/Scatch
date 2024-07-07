@@ -65,9 +65,9 @@ app.post("/create-checkout-session", async (req, res) => {
           price_data: {
             currency: "usd",
             product_data: {
-              name: "Sample Product",
+              name: "Clinge Bag",
             },
-            unit_amount: 2000, // $20.00
+            unit_amount: 220, // $20.00
           },
           quantity: 1,
         },
