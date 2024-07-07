@@ -39,3 +39,22 @@ Make sure you have the following installed:
    ```bash
    git clone https://github.com/your-github-username/scatch-ecommerce.git
    cd scatch-ecommerce
+   Install dependencies
+
+2.Copy code
+npm install
+Set up environment variables
+
+4. Create a .env file in the root directory and add the following:
+
+env
+Copy code
+PORT=3000
+MONGODB_URI=mongodb://localhost:27017/scatch
+JWT_SECRET=your_jwt_secret
+STRIPE_SECRET_KEY=your_stripe_secret_key
+Run the application
+
+4. Copy code
+npm start
+The application should now be running on http://localhost:3000.
