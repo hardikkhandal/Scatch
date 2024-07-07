@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Dashboard</title>
+    <!-- Link to Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="bg-gray-100">
+    <div class="max-w-4xl mx-auto py-8">
+        <h1 class="text-3xl font-bold mb-4">Welcome to Your Dashboard, <%= owner.fullname %>
+        </h1>
+
+        <!-- Display sold items -->
+        <div class="bg-white shadow-md rounded-lg p-4 mb-4">
+            <h2 class="text-xl font-bold mb-2">Sold Items</h2>
+            <ul>
+                <% payments.forEach(payment=> { %>
+                    <li class="text-gray-700">
+                        <%= payment.description %> - <%= payment.amount_received / 100 %> USD
+                    </li>
+                    <% }); %>
+            </ul>
+        </div>
+
+        <!-- Display total amount received -->
+        <div class="bg-white shadow-md rounded-lg p-4 mb-4">
+            <h2 class="text-xl font-bold mb-2">Total Amount Received</h2>
+            <p class="text-gray-700">
+                <%= totalAmount %> USD
+            </p>
+        </div>
+
+        <!-- Hidden element to store chart data -->
+        <div id="chartData" data-chart="<%- JSON.stringify(chartData).replace(/" /g, '&quot;' ) %>" class="hidden">
+        </div>
+
+        <!-- Chart.js line chart -->
+        <div class="bg-white shadow-md rounded-lg p-4 mb-8">
+            <h2 class="text-xl font-bold mb-2">Amount Received Chart</h2>
+            <div class="w-full">
+                <canvas id="amountReceivedChart" class="w-full"></canvas>
+            </div>
+        </div>
+
+        <!-- JavaScript to create the chart -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var chartDataElement = document.getElementById('chartData');
+                if (chartDataElement) {
+                    try {
+                        var chartDataString = chartDataElement.getAttribute('data-chart');
+                        var chartData = JSON.parse(chartDataString);
+
+                        var ctx = document.getElementById('amountReceivedChart').getContext('2d');
+
+                        new Chart(ctx, {
+                            type: 'line',
+                            data: chartData,
+                            options: {
+                                scales: {
+                                    x: {
+                                        type: 'time', // Use time scale for x-axis if labels are timestamps
+                                        time: {
+                                            unit: 'day' // Adjust as per your data granularity
+                                        }
+                                    },
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+                    } catch (error) {
+                        console.error('Error parsing JSON:', error);
+                    }
+                } else {
+                    console.error('chartDataElement not found.');
+                }
+            });
+        </script>
+
+        <!-- Action buttons -->
+        <div class="flex space-x-4 mt-4">
+            <a href="/owners/productcreate" class="btn btn-primary bg-blue-500 text-white px-4 py-2 rounded">Add
+                Product</a>
+            <a href="/admin-chat" class="btn btn-primary bg-blue-500 text-white px-4 py-2 rounded">Chat With
+                Customer</a>
+        </div>
+    </div>
+</body>
+
+</html>

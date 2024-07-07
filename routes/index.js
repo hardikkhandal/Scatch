@@ -3,9 +3,37 @@ const isLoggedIn = require("../middlewares/isLoggedIn");
 const productModel = require("../models/productModel");
 const userModel = require("../models/userModel");
 const router = express();
+const jwt = require("jsonwebtoken");
 
-router.get("/", function (req, res) {
+router.get("/", async function (req, res) {
   let error = req.flash("error");
+  let success = req.flash("success");
+
+  // Check for the presence of the token
+  const token = req.cookies.token;
+
+  if (token) {
+    try {
+      // Verify the token
+      const decoded = jwt.verify(token, process.env.JWT_KEY);
+
+      // Find the user by email
+      let user = await userModel
+        .findOne({ email: decoded.email })
+        .populate("cart");
+
+      let products = await productModel.find();
+      // If user is found, render the shop page
+      if (user) {
+        return res.render("shop", { user, success, products, loggedin: true });
+      }
+    } catch (err) {
+      // If token verification fails, continue to render the index page
+      console.error("Token verification failed:", err);
+    }
+  }
+
+  // If no token or verification fails, render the index page
   res.render("index", { error, loggedin: false });
 });
 
